@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/add-driver.css' %}" />
+    <script defer src="{% static 'js/add-driver.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/all.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-light.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-regular.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-solid.css' %}" />
+    <!-- Ajoute ceci dans le <head> -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+        integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    />
+</head>
+<body>
+    <div class="dashboard">
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">
+                        Allo Voyage
+                    </div>
+                    <div class="activities-box">
+                        <div class="activities">
+                            <i class="fa-solid fa-grid"></i>&nbsp;&nbsp;
+                            <span>Activités</span>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <i style="position:absolute; top:8px; left:7px; color:#8B8B8B;" class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search driver">
+                        <button>OK</button>
+                    </div>
+            </div>
+            <div class="header-right">
+                <div class="language"><i class="fa-regular fa-globe"></i><span style="font-size:13px; padding-left:5px; font-weight:bold;">EN</span>&nbsp;</div>
+                <div class="circle-help-box">
+                    <div class="circle-help"><i class="fa-light fa-circle-question"></i></div>
+                </div>
+                <div class="user-profile">
+                    <div class="circle-user"><i style="position:absolute; top:5px; left:6px;" class="fa-solid fa-user"></i></div>
+                    <div class="metier">
+                        <div>Role</div>
+                        <div>superAdmin</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-container">
+            <div class="sidebar">
+                <ul>
+                     <li><a href="{% url 'dashboard_superadmin' %}"><i style="font-size:32px" class="fa-solid fa-user-tie-hair"></i>&nbsp;&nbsp;<div>Administrateur</div></a></li>
+                     <li><a href="{% url 'dashboard_vehicle' %}"><i style="font-size:32px" class="fa-solid fa-bus"></i>&nbsp;&nbsp;<div>Gestion vehicule</div></a></li>
+                     <li><a href="{% url 'dashboard_line' %}"><i style="font-size:32px" class="fa-solid fa-road"></i>&nbsp;&nbsp;<div>Ligne voyage</div></a></li>
+                     <li class="active"><a href="{% url 'dashboard_driver' %}"><i style="font-size:32px" class="fa-regular fa-id-card"></i>&nbsp;&nbsp;<div>Chauffeurs</div></a></li>
+                     <li><a href="{% url 'dashboard_agency' %}"><i style="font-size:32px" class="fa-sharp fa-regular fa-house-laptop"></i>&nbsp;&nbsp;<div>Agence</div></a></li>
+                     <li><a href="{% url 'dashboard_trip' %}"><i style="font-size:32px" class="fa-regular fa-calendar"></i>&nbsp;&nbsp;<div>Planification voyage</div></a></li>
+                     <li><a href="{% url 'home' %}"><i style="font-size:32px" class="fa-solid fa-ticket"></i>&nbsp;&nbsp;<div>Page reservation</div></a></li>
+                </ul> 
+             </div>
+             <div>
+                <div class="right-side">
+                    <h2>Ajouter un administrateur</h2>
+                        
+                    {% if error %}
+                        <div class="alert-error">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+
+                    <form action="{% url 'save_admin' %}" method="POST">
+                        {% csrf_token %}
+            
+                        <label for="admin_name">Nom de l'Administrateur :</label>
+                        <input type="text" id="admin_name" name="admin_name" required value="{{ admin_name|default:'' }}">
+            
+                        <label for="mail">Email :</label>
+                        <input type="email" id="mail" name="mail" required value="{{ mail|default:'' }}">
+            
+                        <label for="country">Pays :</label>
+                        <select id="country" name="country" required>
+                            <option value="{{ country }}" selected>{{ country }}</option>
+                            <!-- Ajouter d'autres options si nécessaire -->
+                        </select>
+            
+                        <label for="city">Ville :</label>
+                        <input type="text" id="city" name="city" required value="{{ city|default:'' }}">
+                        <label for="city">Localité :</label>
+                        <input type="text" id="localite" name="localite" required value="{{ localite|default:'' }}">
+            
+                        <label for="tel_number">Numéro de téléphone :</label>
+                        <div class="phone-container">
+                            <select id="country_code" name="country_code" required>
+                                <option value="{{ country_code }}" selected>{{ country_code }}</option>
+                                <!-- Ajouter d'autres options si nécessaire -->
+                            </select>
+                            <input type="number" id="tel_number" name="tel_number" required placeholder="Numéro" value="{{ tel_number|default:'' }}">
+                        </div>
+            
+                        <label for="authorised_agencies">Agences Autorisées :</label>
+<select id="authorised_agencies" name="authorised_agencies" multiple required class="select2">
+  
+</select>
+
+
+
+            
+<button class="button-33" type="submit">Ajouter</button>
+<button class="button-34" type="reset">Annuler</button>
+                    </form>
+                 </div>
+             </div>
+        </div>
+    </div>
+</body>
+<!-- jQuery version 3.7.1 (dernière version stable) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+  integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+    $(function () {
+      var agencyOptions = {{ agencies|safe }};  // Insère la liste d'agences dans le script
+  
+      $("#authorised_agencies").selectize({
+        plugins: ["restore_on_backspace", "clear_button"],
+        delimiter: " - ",
+        persist: false,
+        maxItems: null,
+        valueField: "value",
+        labelField: "agency_name",
+        searchField: ["agency_name"],
+        options: agencyOptions
+      });
+    });
+  </script>
+  
+</html>

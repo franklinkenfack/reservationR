@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/all.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-light.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-regular.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-solid.css' %}" />
+</head>
+<body>
+    <div class="dashboard">
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">
+                        Allo Voyage
+                    </div>
+                    <div class="activities-box">
+                        <div class="activities">
+                            <i class="fa-solid fa-grid"></i>&nbsp;&nbsp;
+                            <span>Activités</span>
+                        </div>
+                    </div>
+                    <div class="search-bar">
+                        <i style="position:absolute; top:8px; left:7px; color:#8B8B8B;" class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search a trip">
+                        <button>OK</button>
+                    </div>
+            </div>
+            <div class="header-right">
+                <div class="language"><i class="fa-regular fa-globe"></i><span style="font-size:13px; padding-left:5px; font-weight:bold;">EN</span>&nbsp;</div>
+                <div class="circle-help-box">
+                    <div class="circle-help"><i class="fa-light fa-circle-question"></i></div>
+                </div>
+                <div class="user-profile">
+                    <div class="circle-user"><i style="position:absolute; top:5px; left:6px;" class="fa-solid fa-user"></i></div>
+                    <div class="metier">
+                        <div>Role</div>
+                        <div>superAdmin</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-container">
+            <div class="sidebar">
+                <ul>
+                     <li><a href="{% url 'dashboard_superadmin' %}"><i style="font-size:32px" class="fa-solid fa-user-tie-hair"></i>&nbsp;&nbsp;<div>Administrateur</div></a></li>
+                     <li><a href="{% url 'dashboard_vehicle' %}"><i style="font-size:32px" class="fa-solid fa-bus"></i>&nbsp;&nbsp;<div>Gestion vehicule</div></a></li>
+                     <li><a href="{% url 'dashboard_line' %}"><i style="font-size:32px" class="fa-solid fa-road"></i>&nbsp;&nbsp;<div>Ligne voyage</div></a></li>
+                     <li><a href="{% url 'dashboard_driver' %}"><i style="font-size:32px" class="fa-regular fa-id-card"></i>&nbsp;&nbsp;<div>Chauffeurs</div></a></li>
+                     <li><a href="{% url 'dashboard_agency' %}"><i style="font-size:32px" class="fa-sharp fa-regular fa-house-laptop"></i>&nbsp;&nbsp;<div>Agence de voyage</div></a></li>
+                     <li class="active"><a href="{% url 'dashboard_trip' %}"><i style="font-size:32px" class="fa-regular fa-calendar"></i>&nbsp;&nbsp;<div>Planification voyage</div></a></li>
+                     <li><a href="{% url 'home' %}"><i style="font-size:32px" class="fa-solid fa-ticket"></i>&nbsp;&nbsp;<div>Page reservation</div></a></li>
+                </ul> 
+             </div>
+             <div>
+                <div class="right-side">
+                    <div class="some-item"><a href="#">Programmer un voyage</a></div>
+                    <div class="some-item"><a href="#">Annuler un voyage</a></div>
+                    <div class="some-item"><a href="#">Modifier les informations d'un voyage programmé</a></div>
+                 </div>
+             </div>
+        </div>
+    </div>
+</body>
+</html>

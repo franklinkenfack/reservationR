@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajout Réussi</title>
+    <link rel="stylesheet" href="{% static 'css/add-confirmation.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/all.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-light.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-regular.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/v6.4.0/css/sharp-solid.css' %}" />
+</head>
+<body>
+    <i class="fa-solid fa-circle-check icon"></i>
+    <p class="message">Ajout effectué avec succès</p>
+    <a href="{% url 'dashboard_superadmin' %}" class="back-link">Retour au tableau de bord</a>
+
+</body>
+</html>
