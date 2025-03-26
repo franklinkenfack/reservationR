@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+</head>
+<body>
+    <div class="login-container">
+        <div style="height:25px; width:100%;">
+            <div style="background:#F8D7DA; padding:3px; display: none; text-align:center; font-size:14px; border-radius:5px;" class="alert-error"></div>
+        </div>
+        <h2 class="text-center">Connexion</h2>
+
+        <form id="login-form">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail :</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe :</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="button-33">Se connecter</button>
+
+            <!-- Zone pour afficher les erreurs -->
+            <div class="text-center mt-3">
+                <a href="{% url 'password_recovery' %}" class="text-decoration-none forget">Mot de passe oublié ?</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Gestion du formulaire en AJAX
+            $("#login-form").submit(function(event) {
+                event.preventDefault();  // Empêche l'envoi classique du formulaire
+                
+                var formData = $(this).serialize();  // Sérialise les données du formulaire
+
+                $.ajax({
+                    url: "{% url 'connexion' %}",  // URL de la vue Django
+                    method: "POST",
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            // Redirige vers le dashboard si la connexion réussit
+                            window.location.href = "{% url 'dashboard_superadmin' %}";
+                        } else {
+                            // Affiche l'erreur si les identifiants sont incorrects
+                            $(".alert-error").html(response.error).show();
+
+                            // Disparaît après 6 secondes
+                            setTimeout(function() {
+                                $(".alert-error").fadeOut();
+                            }, 6000);
+                        }
+                    },
+                    error: function(xhr) {
+                        // Gestion des erreurs AJAX
+                        var errorMsg = xhr.responseJSON?.error || "Une erreur est survenue.";
+                        $(".alert-error").html(errorMsg).show();
+
+                        setTimeout(function() {
+                            $(".alert-error").fadeOut();
+                        }, 6000);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

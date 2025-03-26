@@ -27,8 +27,9 @@ from superadmin.views import dashboard_agency
 from reservation.views import home
 from chauffeur.views import add_driver
 from chauffeur.views import save_driver
-from superadmin.views import save_admin
-from chauffeur.views import save_driver
+from superadmin.views import save_admin, login_view, password_recovery
+from superadmin.views import connexion, password_link_notify, generate_password, deconnexion
+from django.contrib.auth import views as auth_views
 from agence.views import save_agency
 from superadmin.views import add_admin
 from agence.views import add_agency
@@ -43,13 +44,22 @@ urlpatterns = [
     path('agency/dashboard/', dashboard_agency, name='dashboard_agency'),
     path('home/', home, name='home'),
     path('add-driver/', add_driver, name='add_driver'),
+    # path('generate-password/', add_driver, name='add_driver'),
     path('save-driver/', save_driver, name='save_driver'),
     path('save-admin/', save_admin, name='save_admin'),
     path('save-agency/', save_agency, name='save_agency'),
     path('add-admin/', add_admin, name='add_admin'),
     path('add-agency/', add_agency, name='add_agency'),
+    path('login/', login_view, name='login_view'),
+    path('password-recovery/', password_recovery, name='password_recovery'),
+    # path('generate-password/', generate_password, name='generate_password'),
+    path('generate-password/<int:id>/', generate_password, name='generate_password'),
+    path('password-link-notify/', password_link_notify, name='password_link_notify'),
+    path('connexion/', connexion, name='connexion'),
+    path('deconnexion/', deconnexion, name='deconnexion'),
+    
+    # path('/', password_link_notify, name='password_link_notify'),
 ]
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

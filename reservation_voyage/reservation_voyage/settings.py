@@ -16,6 +16,10 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+AUTH_USER_MODEL = 'all_admin.AllAdmin'
+
+LOGIN_URL = 'login_view'
+LOGOUT_REDIRECT_URL = 'login_view'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -27,7 +31,6 @@ SECRET_KEY = 'django-insecure-hps+(4m!9+$5&+x(bv14r1^+wkgfi_p7_v)!e!x&ps8aqwe67n
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -52,6 +55,7 @@ INSTALLED_APPS = [
     'voyage',  # Application pour les voyages
     'all_admin',  # Application pour les administrateurs
     'log_admin',  # Application pour les logs des administrateurs
+    'authorisation', 
 ]
 
 MIDDLEWARE = [

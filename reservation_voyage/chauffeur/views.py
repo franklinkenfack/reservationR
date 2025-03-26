@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Driver
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 def add_driver(request):
     return render(request, 'driver/add-driver.html')
-
 
 def save_driver(request):
     if request.method == "POST":

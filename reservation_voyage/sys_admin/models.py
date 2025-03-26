@@ -10,7 +10,6 @@ class SysAdmin(models.Model):
     ]
     
     admin_id = models.AutoField(primary_key=True)  # Auto-incrémenté
-    authorised_agencies = models.ManyToManyField(Agency, related_name='sysadmins')  # Agences autorisées
     all_admin = models.ForeignKey(AllAdmin, on_delete=models.CASCADE, null=True)  # Clé étrangère vers AllAdmin
     state = models.CharField(max_length=10, choices=STATE_CHOICES, default='VISIBLE')  # Champ state ajouté
 

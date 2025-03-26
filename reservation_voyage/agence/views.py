@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Agency
@@ -7,6 +8,8 @@ from .models import Agency
 def add_agency(request):
     return render(request, 'agency/add-agency.html')
 
+
+@transaction.atomic
 def save_agency(request):
     if request.method == "POST":
         agency_name = request.POST.get("agency_name")

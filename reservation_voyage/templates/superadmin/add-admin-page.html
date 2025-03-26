@@ -1,0 +1,134 @@
+
+{% extends 'base-super-admin-page.html' %}
+{% load static %}
+
+{% block css %}   
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+        integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="{% static 'css/add-driver.css' %}" />
+{% endblock %}
+
+{% block main %}
+    <div class="right-side">
+
+        <h2 style="margin-bottom: 0.7em;">Ajouter un administrateur</h2>
+            
+        {% if error %}
+            <div class="alert-error">
+                {{ error }}
+            </div>
+        {% endif %}
+    
+        <form action="{% url 'save_admin' %}" method="POST">
+            {% csrf_token %}
+
+            <div style="display:flex; flex-direction:row; flex-wrap:nowrap; height:30px; width: 500px; align-items:center;">
+                <div  class="alert-error"></div>
+            </div>
+
+            <label for="admin_name">Nom de l'Administrateur :</label>
+            <input type="text" id="admin_name" name="admin_name" required value="{{ admin_name|default:'' }}">
+    
+            <label for="mail">Email :</label>
+            <input type="email" id="mail" name="mail" required value="{{ mail|default:'' }}">
+    
+            <label for="country">Pays :</label>
+            <select id="country" name="country" required>
+                <option value="{{ country }}" selected>{{ country }}</option>
+                <!-- Ajouter d'autres options si nécessaire -->
+            </select>
+    
+            <label for="city">Ville :</label>
+            <input type="text" id="city" name="city" required value="{{ city|default:'' }}">
+            <label for="city">Localité :</label>
+            <input type="text" id="localite" name="localite" required value="{{ localite|default:'' }}">
+    
+            <label for="tel_number">Numéro de téléphone :</label>
+            <div class="phone-container">
+                <select id="country_code" name="country_code" required>
+                    <option value="{{ country_code }}" selected>{{ country_code }}</option>
+                    <!-- Ajouter d'autres options si nécessaire -->
+                </select>
+                <input type="number" id="tel_number" name="tel_number" required placeholder="Numéro" value="{{ tel_number|default:'' }}">
+            </div>
+    
+            <label for="authorised_agencies">Agences Autorisées :</label>
+            <select id="authorised_agencies" name="authorised_agencies" multiple required class="select2"> </select>
+            <button class="button-33" type="submit">Ajouter</button>
+            <button class="button-34" type="reset">Annuler</button>
+        </form>
+     </div>
+
+{% endblock %}
+
+{% block js %}
+    <!-- jQuery version 3.7.1 (dernière version stable) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+    integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    ></script>
+    <script defer src="{% static 'js/add-driver.js' %}"></script>
+
+     <!-- Passer les données agencies en JSON -->
+    <script>    
+        $(document).ready(function() {
+            // Code pour initialiser Selectize pour les agences
+
+            var agencyOptions = JSON.parse('{{ agencies | escapejs }}');
+            console.log("joly bible");
+
+            $("#authorised_agencies").selectize({
+                plugins: ["restore_on_backspace", "clear_button"],
+                delimiter: " - ",
+                persist: false,
+                maxItems: null,
+                valueField: "value",
+                labelField: "agency_name",
+                searchField: ["agency_name"],
+                options: agencyOptions
+            });
+
+            // Code pour gérer l'envoi du formulaire en AJAX
+            $("form").submit(function(event) {
+                event.preventDefault();  // Empêche l'envoi normal du formulaire        
+                var formData = $(this).serialize();  // Sérialise les données du formulaire
+                $.ajax({
+                    url: "{% url 'save_admin' %}",
+                    method: "POST",
+                    data: formData,
+                    success: function(response) {
+                        // Rediriger vers la page de génération de mot de passe avec l'ID de l'utilisateur
+                        // Construire l'URL avec l'ID
+
+                        //var userId = 2;
+                        var userId = response.admin_id;  // Récupérer l'ID de l'utilisateur retourné
+                        console.log(userId);
+                        var redirect = "{% url 'generate_password' 0 %}".replace("0", userId);
+                        window.location.href = redirect;
+                    },
+                    error: function(xhr) {
+                    // Si une erreur se produit, on récupère le message d'erreur et on l'affiche
+                        var errorMsg = xhr.responseJSON.error;
+                        $(".alert-error").html(errorMsg).show();  // Affiche l'erreur dans un div alert-error
+                        console.log(errorMsg);
+
+                        // Fait disparaître l'erreur après 6 secondes avec un effet fadeOut
+                        setTimeout(function() {
+                            $(".alert-error").fadeOut();
+                        }, 6000);  // 6000 ms = 6 secondes
+
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+

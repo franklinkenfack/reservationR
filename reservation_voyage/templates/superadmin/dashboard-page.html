@@ -1,0 +1,11 @@
+{% extends 'base-super-admin-page.html' %}
+
+{% block main %}
+    <div class="right-side">
+        <div class="some-item"><a href="#">Ajouter un superAdmin</a></div>
+        <div class="some-item"><a href="{% url 'add_admin' %}">Ajouter un nouvel administrateur</a></div>
+        <div class="some-item"><a href="#">Modifier les droits d'un administrateur</a></div>
+        <div class="some-item"><a href="#">Supprimer un administrateur</a></div>
+        <div class="some-item"><a href="#">Rechercher un administrateur</a></div>
+    </div>
+{% endblock %}
