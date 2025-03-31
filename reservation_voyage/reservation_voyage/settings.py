@@ -20,6 +20,21 @@ AUTH_USER_MODEL = 'all_admin.AllAdmin'
 
 LOGIN_URL = 'login_view'
 LOGOUT_REDIRECT_URL = 'login_view'
+LOGIN_REDIRECT_URL = 'dashboard_superadmin'
+
+
+# Mail de renitialisation
+AUTHENTICATION_BACKENDS = [
+    'all_admin.custom_auth_backend.CustomAuthenticationBackend',
+]
+
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = 'host_user'
+EMAIL_HOST_PASSWORD = 'password'
+EMAIL_PORT = '2525'
+
+PASSWORD_RESET_TIMEOUT = 14400
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/

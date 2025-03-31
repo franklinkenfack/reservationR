@@ -29,7 +29,7 @@
 
             <!-- Zone pour afficher les erreurs -->
             <div class="text-center mt-3">
-                <a href="{% url 'password_recovery' %}" class="text-decoration-none forget">Mot de passe oublié ?</a>
+                <a href="{% url 'password_reset' %}" class="text-decoration-none forget">Mot de passe oublié ?</a>
             </div>
         </form>
     </div>
@@ -50,6 +50,7 @@
                     data: formData,
                     success: function(response) {
                         if (response.success) {
+                            console.log("go go go");
                             // Redirige vers le dashboard si la connexion réussit
                             window.location.href = "{% url 'dashboard_superadmin' %}";
                         } else {

@@ -27,12 +27,12 @@ from superadmin.views import dashboard_agency
 from reservation.views import home
 from chauffeur.views import add_driver
 from chauffeur.views import save_driver
-from superadmin.views import save_admin, login_view, password_recovery
 from superadmin.views import connexion, password_link_notify, generate_password, deconnexion
-from django.contrib.auth import views as auth_views
+# from django.contrib.auth import views as auth_views
 from agence.views import save_agency
-from superadmin.views import add_admin
+from superadmin.views import *
 from agence.views import add_agency
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -51,15 +51,21 @@ urlpatterns = [
     path('add-admin/', add_admin, name='add_admin'),
     path('add-agency/', add_agency, name='add_agency'),
     path('login/', login_view, name='login_view'),
-    path('password-recovery/', password_recovery, name='password_recovery'),
+    # path('password-recovery/', password_recovery, name='password_recovery'),
     # path('generate-password/', generate_password, name='generate_password'),
     path('generate-password/<int:id>/', generate_password, name='generate_password'),
     path('password-link-notify/', password_link_notify, name='password_link_notify'),
     path('connexion/', connexion, name='connexion'),
     path('deconnexion/', deconnexion, name='deconnexion'),
-    
     # path('/', password_link_notify, name='password_link_notify'),
-]
+   path('activate/<uidb64>/<token>', activate, name='activate'),
+    path('password_reset/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='core/password_reset_done.html'),
+          name='password_reset_done'),
+    path('password_reset_complete', auth_views.PasswordResetCompleteView.as_view(template_name='core/password_reset_complete.html'),
+          name='password_reset_complete'),
+ ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

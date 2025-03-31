@@ -17,6 +17,23 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 
+# Envoi de mail
+from django.contrib import auth, messages
+from django.contrib.auth.models import User
+from django.conf import settings
+
+from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView
+from django.core.mail import send_mail, EmailMessage
+from django.contrib import messages
+from .tokens import account_activation_token  # Assurez-vous que le token est bien importé
+
+
 User = get_user_model()
 
 def login_view(request):
@@ -24,6 +41,8 @@ def login_view(request):
 
 @login_required
 def dashboard_superadmin(request):
+    print("code")
+    print(request.user)  
     return render(request, 'superadmin/dashboard-page.html')
 
 
@@ -46,10 +65,6 @@ def dashboard_trip(request):
 @login_required
 def dashboard_agency(request):
     return render(request, 'agency/dashboard.html')
-
-@login_required
-def password_recovery(request):
-    return render(request, 'password-recovery-page.html')
 
 @login_required
 def password_link_notify(request):
@@ -153,7 +168,6 @@ from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 
 
-
 def connexion(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -162,17 +176,17 @@ def connexion(request):
         if not email or not password:
             return JsonResponse({"success": False, "error": "Tous les champs sont obligatoires."})
 
-        try:
-            # Vérification directe de l'utilisateur
-            user = AllAdmin.objects.get(mail=email)
-            if user.check_password(password) and user.is_active:
+        # Utilisation du backend personnalisé
+        user = authenticate(request, username=email, password=password)
+        
+        if user is not None:
+            if user.is_active:
                 login(request, user)
                 return JsonResponse({"success": True})
             else:
-                return JsonResponse({"success": False, "error": "Mot de passe incorrect."})
-                
-        except AllAdmin.DoesNotExist:
-            return JsonResponse({"success": False, "error": "Aucun utilisateur avec cet email."})
+                return JsonResponse({"success": False, "error": "Ce compte est désactivé."})
+        else:
+            return JsonResponse({"success": False, "error": "Email ou mot de passe incorrect."})
     
     return JsonResponse({"success": False, "error": "Méthode non autorisée."})
 
@@ -181,3 +195,117 @@ def deconnexion(request):
     logout(request)
     request.session.flush()  # Vide complètement la session
     return redirect('login_view')  # Ajoute return pour effectuer la redirection
+
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = AllAdmin.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, AllAdmin.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+
+        messages.success(request, 'Merci pour la confirmation de votre email. Vous pouvez maintenant vous connecter.')
+        return redirect('login_view')  # Vérifiez que 'login_view' est bien défini dans vos URLs
+    else:
+        messages.error(request, "Le lien d'activation est invalide !")
+
+    return redirect('dashboard_superadmin')
+
+
+def activateEmail(request, user, to_email):
+    context = {
+        'user': user,
+        'domain': get_current_site(request).domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token.make_token(user),
+        'protocol': 'https' if request.is_secure() else 'http'
+    }
+
+    email_content = render_to_string('reset-password/acct_active_email.html', context)
+
+    email_subject = 'Activate your account.'
+    recipient_list = [to_email]
+    from_email = 'allforms@limited.com'
+
+    success = send_mail(
+        email_subject,
+        '',
+        from_email,
+        recipient_list,
+        html_message=email_content,
+        fail_silently=False
+    )
+
+    if success > 0:
+        messages.success(
+            request,
+            f"Dear {user}, Please go to your email '{to_email}' inbox and click on "
+            f"the received activation link to confirm and complete the registration. Note: Check your spam folder"
+        )
+    else:
+        messages.error(request, f'There was a problem sending email to {to_email}, please make sure your email was spelt correctly.')
+
+
+
+def send_custom_password_reset_email(request, user):
+    context = {
+        'name': user,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': default_token_generator.make_token(user),
+        'protocol': 'https' if request.is_secure() else 'http',
+        'domain': get_current_site(request).domain,
+    }
+    subject = 'Password Reset'
+    from_email = 'tutomekontchou3@gmail.com'
+    to_email = user.email
+   
+    email_content = render_to_string('reset-password/password_reset_mail.html', context)
+    
+    msg = EmailMessage(
+        subject,
+        email_content,
+        from_email,
+        [to_email],
+        alternatives=[(email_content, 'text/html')],
+    )
+    msg.send()
+    
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'reset-password/password_reset_form.html'
+    email_template_name = 'reset-password/password_reset_mail.html'
+    print("toka")
+    def form_valid(self, form):
+        print("gojo")
+        response = super().form_valid(form)
+        print("gateau")
+        users = list(form.get_users(form.cleaned_data['mail']))
+        user = users[0] if users else None
+
+        if user:
+            print("go")
+            send_custom_password_reset_email(self.request, user)
+            print("go go")
+            return response
+        else:
+            print("bouche be")
+            messages.error(self.request, 'Activation link is invalid!')
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'reset-password/password_reset_confirm.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['uidb64'] = self.kwargs['uidb64']
+        context['token'] = self.kwargs['token']
+        return context
+    
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'Your password has been reset successfully.')
+        return super().form_valid(form)
